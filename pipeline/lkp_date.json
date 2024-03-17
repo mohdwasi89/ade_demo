@@ -1,0 +1,158 @@
+{
+	"name": "lkp_date",
+	"properties": {
+		"activities": [
+			{
+				"name": "In_Lookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select max(TxnDate) as In_tbl_date from dbo.IfTbl_In",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "param_sql",
+						"type": "DatasetReference",
+						"parameters": {
+							"tbl": "IfTbl_In"
+						}
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "Out_Lookup",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select max(TxnDate) as Out_tbl_date from dbo.IfTbl_Out",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "param_sql",
+						"type": "DatasetReference",
+						"parameters": {
+							"tbl": "IfTbl_Out"
+						}
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "In_Lookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Out_Lookup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(\n    activity('In_Lookup').output.firstRow.In_tbl_date, \n    activity('Out_Lookup').output.firstRow.Out_tbl_date)\n\n    ",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Wait_False",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Copy tbl",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "param_sql",
+									"type": "DatasetReference",
+									"parameters": {
+										"tbl": "IfTbl_In"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "param_sql",
+									"type": "DatasetReference",
+									"parameters": {
+										"tbl": "IfTbl_Out"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-03-13T02:55:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,90 @@
+{
+	"name": "dflow_join",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "emp_join_demo",
+						"type": "DatasetReference"
+					},
+					"name": "tbl1"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp2_join_demo",
+						"type": "DatasetReference"
+					},
+					"name": "tbl2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "passenger_blob",
+						"type": "DatasetReference"
+					},
+					"name": "joindemosink",
+					"rejectedDataLinkedService": {
+						"referenceName": "connect_out2",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "jointbl"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Emp_id as integer,",
+				"          Name as string,",
+				"          Salary as integer,",
+				"          Dept as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> tbl1",
+				"source(output(",
+				"          Emp_id as integer,",
+				"          Name as string,",
+				"          Salary as integer,",
+				"          Dept as string,",
+				"          Country as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> tbl2",
+				"tbl1, tbl2 join(tbl1@Emp_id == tbl2@Emp_id,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'off')~> jointbl",
+				"jointbl sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          RowNumber as string,",
+				"          CustomerId as string,",
+				"          Surname as string,",
+				"          CreditScore as string,",
+				"          Geography as string,",
+				"          Gender as string,",
+				"          Age as string,",
+				"          Tenure as string,",
+				"          Balance as string,",
+				"          NumOfProducts as string,",
+				"          HasCrCard as string,",
+				"          IsActiveMember as string,",
+				"          EstimatedSalary as string,",
+				"          Exited as string",
+				"     ),",
+				"     partitionFileNames:['psg_join_demo.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> joindemosink"
+			]
+		}
+	}
+}

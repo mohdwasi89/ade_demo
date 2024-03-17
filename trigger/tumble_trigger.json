@@ -1,0 +1,29 @@
+{
+	"name": "tumble_trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipeline": {
+			"pipelineReference": {
+				"referenceName": "tumble_trigger",
+				"type": "PipelineReference"
+			},
+			"parameters": {
+				"SPStartDate": "2024-03-14",
+				"SPEndDate": "2024-03-16"
+			}
+		},
+		"type": "TumblingWindowTrigger",
+		"typeProperties": {
+			"frequency": "Hour",
+			"interval": 12,
+			"startTime": "2024-03-16T14:18:00Z",
+			"delay": "00:00:00",
+			"maxConcurrency": 50,
+			"retryPolicy": {
+				"intervalInSeconds": 30
+			},
+			"dependsOn": []
+		}
+	}
+}

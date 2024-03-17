@@ -1,0 +1,56 @@
+{
+	"name": "dflow_aggr",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Src_demo",
+						"type": "DatasetReference"
+					},
+					"name": "srcaggr"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "connect_out1",
+						"type": "DatasetReference"
+					},
+					"name": "tgtdemo"
+				}
+			],
+			"transformations": [
+				{
+					"name": "aggrdemo"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          emp_id as integer,",
+				"          Name as string,",
+				"          Salary as integer,",
+				"          dept_name as string,",
+				"          country_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srcaggr",
+				"srcaggr aggregate(groupBy(country_id),",
+				"     avg_sal = avg(Salary)) ~> aggrdemo",
+				"aggrdemo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Id as string,",
+				"          Salary as string,",
+				"          Name as string",
+				"     ),",
+				"     partitionFileNames:['avgsal_demo.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> tgtdemo"
+			]
+		}
+	}
+}

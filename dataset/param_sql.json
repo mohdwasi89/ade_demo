@@ -1,0 +1,25 @@
+{
+	"name": "param_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sqldb_demo",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tbl": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().tbl",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

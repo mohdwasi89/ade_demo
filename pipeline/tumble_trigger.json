@@ -1,0 +1,172 @@
+{
+	"name": "tumble_trigger",
+	"properties": {
+		"activities": [
+			{
+				"name": "tumble_trig",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[dbo].[SP_EMP_TUMBLE]",
+						"storedProcedureParameters": {
+							"STARTDATE": {
+								"type": "Datetime",
+								"value": {
+									"value": "@pipeline().parameters.SPStartDate",
+									"type": "Expression"
+								}
+							},
+							"ENDDATE": {
+								"value": {
+									"value": "@pipeline().parameters.SPEndDate",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "EMPLOYEE_ID",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"name": "EMPLOYEE_ID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "FIRST_NAME",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"name": "FIRST_NAME",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "LAST_NAME",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"name": "LAST_NAME",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SALARY",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "SALARY",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "DEPARTMENT_ID",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "DEPARTMENT_ID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "LOCATION_ID",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"name": "LOCATION_ID",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "HIRE_DATE",
+									"type": "DateTime",
+									"physicalType": "date"
+								},
+								"sink": {
+									"name": "HIRE_DATE",
+									"type": "DateTime",
+									"physicalType": "date"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "param_sql",
+						"type": "DatasetReference",
+						"parameters": {
+							"tbl": "employee_bkp"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "param_sql",
+						"type": "DatasetReference",
+						"parameters": {
+							"tbl": "EMPLOYEE_TUMBLE"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"SPStartDate": {
+				"type": "string"
+			},
+			"SPEndDate": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-03-16T14:25:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

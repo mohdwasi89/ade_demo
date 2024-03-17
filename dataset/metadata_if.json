@@ -1,0 +1,78 @@
+{
+	"name": "metadata_if",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobstg2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Census.csv",
+				"folderPath": "dir1",
+				"container": "container1"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "key",
+				"type": "String"
+			},
+			{
+				"name": "population",
+				"type": "String"
+			},
+			{
+				"name": "population_male",
+				"type": "String"
+			},
+			{
+				"name": "population_female",
+				"type": "String"
+			},
+			{
+				"name": "population_age_00_09",
+				"type": "String"
+			},
+			{
+				"name": "population_age_10_19",
+				"type": "String"
+			},
+			{
+				"name": "population_age_20_29",
+				"type": "String"
+			},
+			{
+				"name": "population_age_30_39",
+				"type": "String"
+			},
+			{
+				"name": "population_age_40_49",
+				"type": "String"
+			},
+			{
+				"name": "population_age_50_59",
+				"type": "String"
+			},
+			{
+				"name": "population_age_60_69",
+				"type": "String"
+			},
+			{
+				"name": "population_age_70_79",
+				"type": "String"
+			},
+			{
+				"name": "population_age_80_and_older",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

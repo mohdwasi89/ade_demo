@@ -1,0 +1,25 @@
+{
+	"name": "event_trigger_demo",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "event_trigger",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/container-demo/blobs/Input",
+			"blobPathEndsWith": ".xlsx",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/6c7f9913-8cbb-413d-b3e7-2ab90a9e2f93/resourceGroups/adfrg-demo/providers/Microsoft.Storage/storageAccounts/adlstest00",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

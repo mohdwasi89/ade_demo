@@ -1,0 +1,48 @@
+{
+	"name": "SQLtblbkp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sqldb_demo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EMPLOYEE_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "FIRST_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "LAST_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SALARY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DEPARTMENT_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LOCATION_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "HIRE_DATE",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "employee_bkp"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

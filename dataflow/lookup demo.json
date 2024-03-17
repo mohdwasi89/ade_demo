@@ -1,0 +1,85 @@
+{
+	"name": "lookup demo",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Src_demo",
+						"type": "DatasetReference"
+					},
+					"name": "srclkdemo"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_csv",
+						"type": "DatasetReference"
+					},
+					"name": "tgtlkdemo"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "connect_out1",
+						"type": "DatasetReference"
+					},
+					"name": "sinklkdemo"
+				}
+			],
+			"transformations": [
+				{
+					"name": "lookupdemo"
+				},
+				{
+					"name": "existsdemo"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          SALARY as integer,",
+				"          DEPARTMENT_ID as short,",
+				"          LOCATION_ID as short,",
+				"          HIRE_DATE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> srclkdemo",
+				"source(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          SALARY as integer,",
+				"          DEPARTMENT_ID as short,",
+				"          LOCATION_ID as short,",
+				"          HIRE_DATE as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> tgtlkdemo",
+				"existsdemo, tgtlkdemo lookup(srclkdemo@HIRE_DATE == tgtlkdemo@HIRE_DATE,",
+				"     multiple: false,",
+				"     pickup: 'last',",
+				"     asc(tgtlkdemo@EMPLOYEE_ID, true),",
+				"     broadcast: 'auto')~> lookupdemo",
+				"srclkdemo, tgtlkdemo exists(srclkdemo@SALARY == tgtlkdemo@SALARY,",
+				"     negate:true,",
+				"     broadcast: 'auto')~> existsdemo",
+				"lookupdemo sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Id as string,",
+				"          Salary as string,",
+				"          Name as string",
+				"     ),",
+				"     filePattern:'lookup_demo.csv',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sinklkdemo"
+			]
+		}
+	}
+}
